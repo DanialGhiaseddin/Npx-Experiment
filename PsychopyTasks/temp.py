@@ -21,6 +21,7 @@ from numpy.random import randint
 from psychopy import gui, visual, core, data, logging
 from psychopy.constants import (NOT_STARTED, STARTED, FINISHED)
 from psychopy.hardware import keyboard
+import random
 
 # Ensure that relative paths start from the same directory as this script
 _thisDir = os.path.dirname(os.path.abspath(__file__))
@@ -93,7 +94,7 @@ defaultKeyboard = keyboard.Keyboard(backend='iohub')
 screen_width = 1920
 screen_height = 1080
 
-rect_size = 240
+rect_size = 120
 
 width_index = [i for i in range(math.ceil(screen_width / rect_size))]
 height_index = [i for i in range(math.ceil(screen_height / rect_size))]
@@ -105,7 +106,7 @@ for w_ind in width_index:
         rect_pos.append((w_ind, h_ind))
 print(rect_pos)
 
-# random.shuffle(rect_pos)
+random.shuffle(rect_pos)
 
 flash_stim = visual.Rect(
     win=win,
