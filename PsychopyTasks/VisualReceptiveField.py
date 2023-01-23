@@ -10,6 +10,7 @@ If you publish work using this script the most relevant publication is:
         https://doi.org/10.3758/s13428-018-01193-y
 
 """
+import time
 
 # --- Import packages ---
 from psychopy import locale_setup
@@ -17,7 +18,7 @@ from psychopy import prefs
 from psychopy import sound, gui, visual, core, data, event, logging, clock, colors, layout
 from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED,
                                 STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
-
+from screeninfo import get_monitors
 import numpy as np  # whole numpy lib is available, prepend 'np.'
 from numpy import (sin, cos, tan, log, log10, pi, average,
                    sqrt, std, deg2rad, rad2deg, linspace, asarray)
@@ -49,9 +50,11 @@ expInfo['psychopyVersion'] = psychopyVersion
 filename = _thisDir + os.sep + u'data/%s_%s' % (expName, expInfo['date'])
 
 # An ExperimentHandler isn't essential but helps with data saving
+cwd = os.getcwd()
+cwd = "\\".join(cwd.split('\\')[:-1])
 thisExp = data.ExperimentHandler(name=expName, version='',
                                  extraInfo=expInfo, runtimeInfo=None,
-                                 originPath='C:\\Users\\dania\\Documents\\Psychopy\\visual_receptivefield.py',
+                                 originPath=f'{cwd}\\visual_receptivefield.py',
                                  savePickle=True, saveWideText=True,
                                  dataFileName=filename)
 # save a log file for detail verbose info
@@ -64,8 +67,10 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 # Start Code - component code to be run after the window creation
 
 # User Codes
-screen_width = 1920
-screen_height = 1080
+monitor = get_monitors()[0]
+
+screen_width = monitor.width
+screen_height = monitor.height
 shuffle_pos = True
 
 rect_size = 120
@@ -169,7 +174,7 @@ _timeToFirstFrame = win.getFutureFlipTime(clock="now")
 frameN = -1
 
 # --- Run Routine "black_wait" ---
-while continueRoutine and routineTimer.getTime() < 1.0:
+while continueRoutine and routineTimer.getTime() < 20.0:
     # get current time
     t = routineTimer.getTime()
     tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -289,7 +294,7 @@ for trial_index, thisTrial in enumerate(trials):
             photo_diod_rect.setAutoDraw(True)
         if photo_diod_rect.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > photo_diod_rect.tStartRefresh + 0.100 - frameTolerance:
+            if tThisFlipGlobal > photo_diod_rect.tStartRefresh + 0.20 - frameTolerance:
                 # keep track of stop time/frame for later
                 photo_diod_rect.tStop = t  # not accounting for scr refresh
                 photo_diod_rect.frameNStop = frameN  # exact frame index
@@ -298,7 +303,7 @@ for trial_index, thisTrial in enumerate(trials):
                 photo_diod_rect.setAutoDraw(False)
 
         # *black_screen* updates
-        if black_screen.status == NOT_STARTED and tThisFlip >= 0.100 - frameTolerance:
+        if black_screen.status == NOT_STARTED and tThisFlip >= 0.20 - frameTolerance:
             # keep track of start time/frame for later
             black_screen.frameNStart = frameN  # exact frame index
             black_screen.tStart = t  # local t and not account for scr refresh
@@ -309,7 +314,7 @@ for trial_index, thisTrial in enumerate(trials):
             black_screen.setAutoDraw(True)
         if black_screen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > black_screen.tStartRefresh + 0.300 - frameTolerance:
+            if tThisFlipGlobal > black_screen.tStartRefresh + 0.380 - frameTolerance:
                 # keep track of stop time/frame for later
                 black_screen.tStop = t  # not accounting for scr refresh
                 black_screen.frameNStop = frameN  # exact frame index
@@ -329,7 +334,7 @@ for trial_index, thisTrial in enumerate(trials):
             stimulus.setAutoDraw(True)
         if stimulus.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > stimulus.tStartRefresh + 0.100 - frameTolerance:
+            if tThisFlipGlobal > stimulus.tStartRefresh + 0.20 - frameTolerance:
                 # keep track of stop time/frame for later
                 stimulus.tStop = t  # not accounting for scr refresh
                 stimulus.frameNStop = frameN  # exact frame index
