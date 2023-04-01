@@ -1,0 +1,34 @@
+Experiment: PsychopyCompatible
+Subject: Subject1
+User: User
+Date: 03/31/2023
+Time: 2:40:28pm
+
+ObjectID: ToneStim - Audio Stimulation
+ StoreID: Tomr
+
+ObjectID: FileStim - File Stimulation
+ StoreID: Fimr
+
+ObjectID: NoiseStim - Audio Stimulation
+ StoreID: Nomr
+
+ObjectID: AudioStimRec - Stream Data Storage
+ StoreID: Stim
+
+ObjectID: AudioSyncRec - Stream Data Storage
+ StoreID: Sync
+
+ObjectID: Diod - Stream Data Storage
+ StoreID: Diod
+
+
+Flat Listing:
+StoreID  Gizmo/Hal
+Diod     Diod
+Fimr     FileStim
+Nomr     NoiseStim
+Stim     AudioStimRec
+Sync     AudioSyncRec
+Tomr     ToneStim
+

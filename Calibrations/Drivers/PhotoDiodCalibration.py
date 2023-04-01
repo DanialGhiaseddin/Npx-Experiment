@@ -39,7 +39,7 @@ class SerialPortManager:
         return arduino_delay
 
 
-serial_port = SerialPortManager("COM4", 115200, 2)
+serial_port = SerialPortManager("COM6", 115200, 2)
 
 while 1:
     command = input('>>')
