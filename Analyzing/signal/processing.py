@@ -22,7 +22,7 @@ def resample_by_interpolation(signal, input_fs, output_fs):
     resampled_signal = np.interp(
         np.linspace(0.0, 1.0, n, endpoint=False),  # where to interpret
         np.linspace(0.0, 1.0, len(signal), endpoint=False),  # known positions
-        signal,  # known data points
+        signal  # known data points
     )
     return resampled_signal
 
@@ -34,10 +34,13 @@ def normalization(signal):
 
 
 def relative_crop(signal, start_point, end_point):
-    start_index = start_point * signal.shape[0]
-    end_index = end_point * signal.shape[0]
+    start_index = start_point * signal.shape[-1]
+    end_index = end_point * signal.shape[-1]
 
-    filtered_signal = signal[int(start_index):int(end_index)]
+    if len(signal.shape) == 1:
+        filtered_signal = signal[int(start_index):int(end_index)]
+    else:
+        filtered_signal = signal[:, int(start_index):int(end_index)]
     return filtered_signal
 
 
