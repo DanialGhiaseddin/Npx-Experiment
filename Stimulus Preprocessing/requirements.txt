@@ -1,0 +1,4 @@
+pydub
+pandas
+matplotlib
+librosa

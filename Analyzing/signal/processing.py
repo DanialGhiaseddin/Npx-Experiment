@@ -22,7 +22,7 @@ def resample_by_interpolation(signal, input_fs, output_fs):
     resampled_signal = np.interp(
         np.linspace(0.0, 1.0, n, endpoint=False),  # where to interpret
         np.linspace(0.0, 1.0, len(signal), endpoint=False),  # known positions
-        signal  # known data points
+        signal,  # known data points
     )
     return resampled_signal
 

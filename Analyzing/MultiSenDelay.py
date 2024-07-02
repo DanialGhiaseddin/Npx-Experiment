@@ -10,7 +10,7 @@ times = pd.timedelta_range(start='0:0:0.440', end='0:0:40.000', periods=2000)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    data = tdt.read_block('C:\TDT\Synapse\Tanks\PsychopyCompatible2-230411-140446\Subject1-230411-152115')
+    data = tdt.read_block('E:/Npx-Experiment/Analyzing/data/tdt tanks/Subject1-230331-144507')
     print(
         colored("-----------------------Data Recording Analyzer-------------------------------------------", "yellow"))
     print('Start Date:', data['info']['start_date'])
@@ -35,12 +35,10 @@ if __name__ == '__main__':
     video = remove_noise_pulses(video, exp_duration)
 
     video_rising_edge = find_rising_edges(video, duration=exp_duration)
-    k = 25000
-    plt.plot(video[20*k:40*k]/2)
-    plt.plot(audio[20*k:40*k])
+    # plt.plot(audio[0000:200000])
     # plt.plot(audio2[0000:200000])
-    # plt.plot(audio)
-    # plt.plot(video / 2)
+    plt.plot(audio[0000:2000000])
+    plt.plot(video[0000:2000000] / 2)
     plt.show()
     print(len(audio_rising_edge[0]))
     print(len(video_rising_edge[0]))

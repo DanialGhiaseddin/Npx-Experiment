@@ -2,13 +2,12 @@ from datetime import datetime
 from datetime import timedelta
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import tdt
 from termcolor import colored
 
-from Analyzing.signal.processing import resample_by_interpolation, relative_crop, normalization, remove_noise_pulses, \
-    find_rising_edges
+from Analyzing.signal.processing import resample_by_interpolation, relative_crop, normalization, remove_noise_pulses, find_rising_edges
+
 
 times = pd.timedelta_range(start='0:0:0.440', end='0:0:40.000', periods=2000)
 
@@ -17,7 +16,7 @@ if __name__ == '__main__':
 
     print(
         colored("-----------------------TDT Data Reader---------------------------------------------------", "yellow"))
-    data = tdt.read_block('C:\TDT\Synapse\Tanks\Experiment5-231217-182516\Subject1-231217-211456')
+    data = tdt.read_block('/home/danial/Documents/Projects/McGill/Npx-Experiment/Analyzing/data/tdt tanks/Subject1-231219-160734')
     print(
         colored("-----------------------Data Recording Analyzer-------------------------------------------", "yellow"))
     print('Start Date:', data['info']['start_date'])
@@ -92,34 +91,14 @@ if __name__ == '__main__':
             print(colored(ex, 'red'))
             continue_flag = False
 
-    plot_channels = 0
-    for raw_data_sig in raw_data:
-        if len(raw_data_sig.shape) > 1:
-            plot_channels += raw_data_sig.shape[0] // 3
-        else:
-            plot_channels += 1
+    fig, axs = plt.subplots(len(raw_data))
 
-    fig, axs = plt.subplots(plot_channels)
-
-    plot_index = 0
     for i, raw_data_sig in enumerate(raw_data):
         f_signal = relative_crop(raw_data_sig, start_idx, end_idx)
         f_signal = normalization(f_signal)
-        if len(raw_data_sig.shape) > 1:
-            n_sig = []
-            for c in range(raw_data_sig.shape[0]//3):
-                n_sig.append(resample_by_interpolation(f_signal[c], sample_rates[i], 8000))
-            f_signal = np.vstack(n_sig)
-        else:
-            f_signal = resample_by_interpolation(f_signal, sample_rates[i], 8000)
+        f_signal = resample_by_interpolation(f_signal, sample_rates[i], 8000)
 
-        times = pd.timedelta_range(start=start_time, end=end_time, periods=f_signal.shape[-1])
+        times = pd.timedelta_range(start=start_time, end=end_time, periods=f_signal.shape[0])
 
-        if len(raw_data_sig.shape) > 1:
-            for c in range(raw_data_sig.shape[0]//3):
-                axs[plot_index].plot(times._data, f_signal[c])
-                plot_index += 1
-        else:
-            axs[plot_index].plot(times._data, f_signal)
-            plot_index += 1
+        axs[i].plot(times._data, f_signal)
     plt.show()
