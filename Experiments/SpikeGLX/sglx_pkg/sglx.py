@@ -4,9 +4,9 @@ from platform import python_version
 from ctypes import *
 
 if python_version() >= "3.8.0":
-    sglx = CDLL("./SglxApi.dll")
+    sglx = CDLL("./SpikeGLX/sglx_pkg/SglxApi.dll")
 else:
-    sglx = CDLL("./SglxApi.dll")
+    sglx = CDLL("./SpikeGLX/sglx_pkg/SglxApi.dll")
 
 # Usage ------------------
 # A client application first creates a connection handle:

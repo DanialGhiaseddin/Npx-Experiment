@@ -8,27 +8,26 @@ from GraphicalInterface.utils.log import parse_log_file
 import pandas as pd
 from tqdm import tqdm
 
-recording_directory = ('/home/danial/Documents/Projects/McGill/Npx-Experiment/Analyzing/data/tdt '
-                       'tanks/Subject1-231219-160734')
+recording_directory = ('C://TDT//Synapse//Tanks//StimSet1-240701-165404//Test-240702-012803')
 
 tdt_data = tdt.read_block(recording_directory)
 
-esc50_dir = '/home/danial/Documents/Projects/McGill/Npx-Experiment/Stimulus Preprocessing/ESC-50-master/audio_test/'
+esc50_dir = 'C://Users//Lomber//Desktop//Npx-Experiment//Stimulus Preprocessing//ESC-50-master//audio_test//'
 
 esc50_df = pd.read_csv(
-    '/home/danial/Documents/Projects/McGill/Npx-Experiment/Stimulus Preprocessing/ESC-50-master/meta/esc50.csv')
+    'C://Users//Lomber//Desktop//Npx-Experiment//Stimulus Preprocessing//ESC-50-master//meta//esc50.csv')
 
 log_file = (
-    '/home/danial/Documents/Projects/McGill/Npx-Experiment/Analyzing/data/tdt tanks/Subject1-231219-160734/stimulus_log_20231219_160734.log')
+    'C://Users//Lomber//Desktop//Npx-Experiment//Experiments//stimulus_log_20240702_012803.log')
 
 _, stim_orders = parse_log_file(log_file)
 
-onsets = tdt_data['epocs'].Tr1_.onset
-offsets = tdt_data['epocs'].Tr1_.offset
+onsets = tdt_data['epocs'].Sg1_.onset
+offsets = tdt_data['epocs'].Sg1_.offset
 
-with (open(path.join(recording_directory, 'TDT_Presentation.csv')) as f):
+with (open(path.join('C://TDT//Synapse//StimFiles', 'Set1.csv')) as f):
     played_stimuli = f.readlines()[0].split(',')
-played_stimuli = [stimulus.split('||')[0] for stimulus in played_stimuli]
+played_stimuli = [stimulus.split('||')[0].split('\\')[-1] for stimulus in played_stimuli]
 index_to_name_map = {}
 name_to_index_map = {}
 for i, stimulus in enumerate(played_stimuli):
@@ -45,7 +44,7 @@ for i, stimulus in tqdm(enumerate(stim_orders)):
     if key not in result_dict:
         result_dict[key] = []
 
-    signal_names_list = ['RSTM', 'RSYN', 'LFPR', 'NEUR']
+    signal_names_list = ['Sync', 'LFSr', 'NFSr', 'Noer', 'Wavv']
 
     trial = {}
 

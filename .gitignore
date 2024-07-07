@@ -2,7 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+Analyzing/data/
+Analyzing/session3.pkl
 # C extensions
 *.so
 

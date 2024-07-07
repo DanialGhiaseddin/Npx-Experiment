@@ -1,0 +1,4 @@
+{
+    "log_dir": "./experiment_logs",
+    "color_space": "rgb"
+}
