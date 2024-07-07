@@ -23,6 +23,7 @@ class ModernUIExample:
         self.logger = Logger(f"software_logs//{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
 
         self.tdt = TDTGlobal()
+        self.emergency_break = False
 
         # Get screen dimensions
         screen_width = self.root.winfo_screenwidth()
@@ -131,88 +132,15 @@ class ModernUIExample:
 
             self.session_based_recording_holder[sec_id] = ui_holder
 
-        # self.natural_stimulus_session = tk.IntVar(value=0)
-        # # self.natural_stimulus_session.trace("w", self.update_ns_session_selector)
-        #
-        # self.ns_session_selector = customtkinter.CTkSlider(self.root, from_=0, to=3, number_of_steps=3,
-        #                                                    # command=self.ns_session_selector_event,
-        #                                                    variable=self.natural_stimulus_session)
-        # self.ns_session_selector.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="we")
-        #
-        # self.toggle_able_comps.append(self.ns_session_selector)
-        #
-        # ns_session_selector_display = customtkinter.CTkLabel(self.root, textvariable=self.natural_stimulus_session)
-        # ns_session_selector_display.grid(row=5, column=2, padx=10, pady=10, sticky="we")
-        #
-        # natural_stimulus_start_recording = customtkinter.CTkButton(self.root, text="Start Recording",
-        #                                                            command=self.start_time_consuming_function)
-        # natural_stimulus_start_recording.grid(row=5, column=3, sticky="nsew", padx=10, pady=10)
-        #
-        # self.toggle_able_comps.append(natural_stimulus_start_recording)
-        #
-        # # Natural Stimulus Extension Set:
-        # natural_sound_ext_label = customtkinter.CTkLabel(master=self.root,
-        #                                                  text="Natural Sound Stimulation Extension:")
-        # natural_sound_ext_label.grid(row=6, column=0, columnspan=2, sticky="nsw", padx=20, pady=1)
-        #
-        # # Create an integer variable and bind it to the slider
-        # self.natural_stimulus_ext_session = tk.IntVar(value=0)
-        # # self.natural_stimulus_ext_session.trace("w", self.update_ns_ext_session_selector)
-        #
-        # # Create the slider bar with range 1 to 10 at the bottom
-        # self.ns_ext_session_selector = customtkinter.CTkSlider(self.root, from_=0, to=3, number_of_steps=3,
-        #                                                        # command=self.ns_ext_session_selector_event,
-        #                                                        variable=self.natural_stimulus_ext_session)
-        # self.ns_ext_session_selector.grid(row=7, column=0, columnspan=2, padx=10, pady=10, sticky="we")
-        #
-        # self.toggle_able_comps.append(self.ns_ext_session_selector)
-        #
-        # ns_ext_session_selector_display = customtkinter.CTkLabel(self.root,
-        #                                                          textvariable=self.natural_stimulus_ext_session)
-        # ns_ext_session_selector_display.grid(row=7, column=2, padx=10, pady=10, sticky="we")
-        #
-        # # Create the second button in the next row
-        # natural_stimulus_ext_start_recording = customtkinter.CTkButton(self.root, text="Start Recording",
-        #                                                                command=None)
-        # natural_stimulus_ext_start_recording.grid(row=7, column=3, sticky="nsew", padx=10, pady=10)
-        #
-        # self.toggle_able_comps.append(natural_stimulus_ext_start_recording)
-        #
-        # # Ultrasonic Vocalization
-        #
-        # ultrasonic_vocal_label = customtkinter.CTkLabel(master=self.root,
-        #                                                 text="Ultrasonic Vocalization")
-        # ultrasonic_vocal_label.grid(row=8, column=0, columnspan=2, sticky="nsw", padx=20, pady=1)
-        #
-        # # Create an integer variable and bind it to the slider
-        # self.ultrasonic_vocalization_session = tk.IntVar(value=0)
-        #
-        # # Create the slider bar with range 1 to 10 at the bottom
-        # self.ultrasonic_session_selector = customtkinter.CTkSlider(self.root, from_=0, to=3, number_of_steps=3,
-        #                                                            variable=self.ultrasonic_vocalization_session)
-        # self.ultrasonic_session_selector.grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky="we")
-        #
-        # self.toggle_able_comps.append(self.ultrasonic_session_selector)
-        #
-        # ultrasonic_selector_display = customtkinter.CTkLabel(self.root,
-        #                                                      textvariable=self.ultrasonic_vocalization_session)
-        # ultrasonic_selector_display.grid(row=9, column=2, padx=10, pady=10, sticky="we")
-        #
-        # # Create the second button in the next row
-        # ultrasonic_vocal_start_recording = customtkinter.CTkButton(self.root, text="Start Recording",
-        #                                                            command=self.show_popup)
-        # ultrasonic_vocal_start_recording.grid(row=9, column=3, sticky="nsew", padx=10, pady=10)
-        #
-        # self.toggle_able_comps.append(ultrasonic_vocal_start_recording)
-
         # Progress Bar and Status Bar
         self.progress_var = tk.IntVar(value=0)
         self.progress_bar = customtkinter.CTkProgressBar(self.root, mode='determinate', variable=self.progress_var)
         self.progress_bar.grid(row=14, column=0, columnspan=3, padx=10, pady=10, sticky="we")
 
-        emergency_break = customtkinter.CTkButton(self.root, text="Emergency Break",
-                                                  command=None, fg_color="#881122")
-        emergency_break.grid(row=14, column=3, sticky="nsew", padx=10, pady=10)
+        self.emergency_break_btn = customtkinter.CTkButton(self.root, text="Emergency Break",
+                                                           command=self.emergency_break_click, fg_color="#881122")
+        self.emergency_break_btn.grid(row=14, column=3, sticky="nsew", padx=10, pady=10)
+        self.emergency_break_btn.configure(state='disabled')
 
         #
         # # Create a text box for logging below the slider
@@ -259,17 +187,6 @@ class ModernUIExample:
                     comp.configure(fg_color=self.original_colors[comp])
             # comp['state'] = state
 
-    # Time-consuming function
-    # def time_consuming_function(self):
-    #     self.toggle_ui_state('disabled')
-    #     for i in range(101):
-    #         time.sleep(0.1)  # Simulate work being done
-    #         self.update_progress(i)
-    #         self.write_log(i)
-    #         self.root.update_idletasks()
-    #     self.toggle_ui_state('normal')
-    #     self.natural_stimulus_session.set(self.natural_stimulus_session.get() + 1)
-
     def test_button_clicked(self, button):
         self.show_popup(f"{button} button was clicked")
         session_handler = SessionHandler(self)
@@ -281,6 +198,14 @@ class ModernUIExample:
         self.show_popup(f"{self.session_number_variables[ses_id].get()} is going to run!")
         threading.Thread(target=play_natural_stimulus_set,
                          args=(self.session_number_variables[ses_id], ses_id, self)).start()
+
+    def emergency_break_click(self):
+        self.emergency_break = True
+        self.emergency_break_btn.configure(state='disabled')
+
+    def restart_emergency_break(self):
+        self.emergency_break = False
+        self.emergency_break_btn.configure(state='normal')
 
     def update_progress(self, percent):
         self.progress_bar.set(percent / 100)
