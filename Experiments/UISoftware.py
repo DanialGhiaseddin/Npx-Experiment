@@ -9,7 +9,6 @@ from functools import partial
 from Experiments.SessionHandler import SessionHandler
 from Logger import Logger
 from Setting import Settings
-from NaturalAudioTDT import play_natural_stimulus_set, play_lf_tone
 from TDTController.Global import TDTGlobal
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
@@ -72,6 +71,7 @@ class ModernUIExample:
         self.toggle_able_comps.append(electrode_location_combobox)
 
         # Set the initial value (optional)
+        # TODO: Add this to log file
         self.electrode_location.set("A1")
         # Test the recording setup.
         test_buttons = ["Test with Pure Tones", "Test with White Noises", "Test with Natural Stimuli",
@@ -91,13 +91,29 @@ class ModernUIExample:
 
             self.toggle_able_comps.append(test_buttons_holder[i])
 
-        session_based_recordings = ["Natural Stim", "Natural Stim Ext", "Ultrasonic Vocalization"]
-        session_counts = [3, 2, 6]
+        tuning_curve_test = ['LF Tuning Curve', 'HF Tuning Curve']
+
+        tuning_curve_buttons_holder = {}
+
+        tuning_curve_label = customtkinter.CTkLabel(master=self.root, text="Tuning Curve Measurement:")
+        tuning_curve_label.grid(row=4, column=0, columnspan=2, sticky="nsw", padx=20, pady=1)
+        for i, tc in enumerate(tuning_curve_test):
+            tuning_curve_buttons_holder[i] = customtkinter.CTkButton(self.root, text=tc,
+                                                                     command=partial(self.test_button_clicked,
+                                                                                     tc.replace(" ", "_").lower()))
+            tuning_curve_buttons_holder[i].grid(row=5, column=i, sticky="nsew", padx=10, pady=10)
+
+            self.toggle_able_comps.append(tuning_curve_buttons_holder[i])
+
+        #
+
+        session_based_recordings = ["Natural Stimuli", "Ultrasonic Vocalization"]
+        session_counts = [15, 2]
 
         natural_sound_label = customtkinter.CTkLabel(master=self.root,
                                                      text="Natural Stimulation: Please select"
                                                           " the session and then click on start.")
-        natural_sound_label.grid(row=5, column=0, columnspan=2, sticky="nsw", padx=20, pady=1)
+        natural_sound_label.grid(row=7, column=0, columnspan=2, sticky="nsw", padx=20, pady=1)
 
         self.session_based_recording_holder = {}
         self.session_number_variables = {}
@@ -115,18 +131,19 @@ class ModernUIExample:
                                                                                      self.session_number_variables[
                                                                                          sec_id])
 
-            ui_holder['slider'].grid(row=6 + i, column=0, columnspan=2, padx=10, pady=10, sticky="we")
+            ui_holder['slider'].grid(row=8 + i, column=0, columnspan=2, padx=10, pady=10, sticky="we")
 
             self.toggle_able_comps.append(ui_holder['slider'])
 
             ui_holder['text_display'] = customtkinter.CTkLabel(self.root, textvariable=self.session_number_variables[
                 sec_id])
-            ui_holder['text_display'].grid(row=6 + i, column=2, padx=10, pady=10, sticky="we")
+            ui_holder['text_display'].grid(row=8 + i, column=2, padx=10, pady=10, sticky="we")
 
             ui_holder['button'] = customtkinter.CTkButton(self.root, text=f"Start {session_rec}",
-                                                          command=partial(self.start_session_btn, sec_id))
+                                                          command=partial(self.run_session_clicked,
+                                                                          session_rec.replace(" ", "_").lower()))
 
-            ui_holder['button'].grid(row=6 + i, column=3, sticky="nsew", padx=10, pady=10)
+            ui_holder['button'].grid(row=8 + i, column=3, sticky="nsew", padx=10, pady=10)
 
             self.toggle_able_comps.append(ui_holder['button'])
 
@@ -189,18 +206,29 @@ class ModernUIExample:
 
     def test_button_clicked(self, button):
         self.show_popup(f"{button} button was clicked")
-        session_handler = SessionHandler(self)
+        session_handler = SessionHandler(self, sender=button)
+        threading.Thread(target=session_handler.run_session,
+                         args=()).start()
+
+    def run_session_clicked(self, button):
+        self.show_popup(f"{button} button was clicked")
+        number = self.session_number_variables[button].get()
+        session_handler = SessionHandler(self, sender=f"{button}_{number}")
         threading.Thread(target=session_handler.run_session,
                          args=()).start()
 
     # Function to start the time-consuming function in a separate thread
-    def start_session_btn(self, ses_id):
-        self.show_popup(f"{self.session_number_variables[ses_id].get()} is going to run!")
-        threading.Thread(target=play_natural_stimulus_set,
-                         args=(self.session_number_variables[ses_id], ses_id, self)).start()
+    # def start_session_btn(self, button):
+    #     self.show_popup(f"{button} button was clicked")
+    #     session_handler = SessionHandler(self, sender=button)
+    #     threading.Thread(target=play_natural_stimulus_set,
+    #                      args=(self.session_number_variables[ses_id], ses_id, self)).start()
 
     def emergency_break_click(self):
         self.emergency_break = True
+        self.emergency_break_btn.configure(state='disabled')
+
+    def disable_emergency_break(self):
         self.emergency_break_btn.configure(state='disabled')
 
     def restart_emergency_break(self):
