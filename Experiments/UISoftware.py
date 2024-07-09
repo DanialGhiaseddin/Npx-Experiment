@@ -107,8 +107,8 @@ class ModernUIExample:
 
         #
 
-        session_based_recordings = ["Natural Stimuli", "Ultrasonic Vocalization"]
-        session_counts = [15, 2]
+        session_based_recordings = ["Natural Stimuli", "Ultrasonic Vocalization", "AV Stimuli", "AV Stimuli Random"]
+        session_counts = [15, 1, 1, 1]
 
         natural_sound_label = customtkinter.CTkLabel(master=self.root,
                                                      text="Natural Stimulation: Please select"

@@ -1,0 +1,67 @@
+{
+    "duration_ms": 200,
+    "inter_stimulus_interval_ms": 800,
+    "shuffle": true,
+    "stimuli": [
+        {
+            "id": 1,
+            "duration_ms": 17000
+        },
+        {
+            "id": 2,
+            "duration_ms": 18000
+        },
+        {
+            "id": 3,
+            "duration_ms": 50000
+        },
+        {
+            "id": 1,
+            "duration_ms": 17000
+        },
+        {
+            "id": 2,
+            "duration_ms": 18000
+        },
+        {
+            "id": 3,
+            "duration_ms": 50000
+        },
+        {
+            "id": 1,
+            "duration_ms": 17000
+        },
+        {
+            "id": 2,
+            "duration_ms": 18000
+        },
+        {
+            "id": 3,
+            "duration_ms": 50000
+        },
+        {
+            "id": 1,
+            "duration_ms": 17000
+        },
+        {
+            "id": 2,
+            "duration_ms": 18000
+        },
+        {
+            "id": 3,
+            "duration_ms": 50000
+        },
+        {
+            "id": 1,
+            "duration_ms": 17000
+        },
+        {
+            "id": 2,
+            "duration_ms": 18000
+        },
+        {
+            "id": 3,
+            "duration_ms": 50000
+        }
+    ]
+}

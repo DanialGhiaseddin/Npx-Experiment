@@ -3,14 +3,14 @@ import numpy as np
 
 # Starting frequency and number of octaves
 
-ids = [i+1 for i in range(36)] * 5
+ids = [i+1 for i in range(36)] * 10
 
 # Create the JSON structure
 stimuli = [{"id": id_num} for id_num in ids]
 
 data = {
-    "duration_ms": 200,
-    "inter_stimulus_interval_ms": 300,
+    "duration_ms": 60,
+    "inter_stimulus_interval_ms": 800,
     "shuffle": True,
     "stimuli": stimuli
 }

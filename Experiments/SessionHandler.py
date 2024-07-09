@@ -11,9 +11,10 @@ from utils import get_function_name
 
 
 class SessionHandler:
-    def __init__(self, master, sender="Test"):
+    def __init__(self, master, sender="Test", penetration_location="Unknown"):
         self.master = master
         self.tdt = master.tdt
+        self.penetration_location = penetration_location
         self.logger = Logger(f"session_logs//{datetime.now().strftime('%Y%m%d_%H%M%S')}_{sender}.log")
 
         self.incremental = False
@@ -95,9 +96,30 @@ class SessionHandler:
                     'functions': [self.rat_vocalization_stimulation],
                     'json_files': ['rat_vocalization.json']
                 }
+        elif "av_stimuli_random" in sender:
+            self.incremental = True
+            self.session_number = int(sender.split("_")[-1])
+            self.global_info[sender] = {
+                'number_of_sub_sessions': 1,
+                'tdt_experiment': [f'XB_Exp2'],
+                'functions': [self.av_stimulation],
+                'json_files': [f'av_stimulation_random_{self.session_number}.json']
+            }
+
+        elif "av_stimuli" in sender:
+            self.incremental = True
+            self.session_number = int(sender.split("_")[-1])
+            self.global_info[sender] = {
+                'number_of_sub_sessions': 1,
+                'tdt_experiment': [f'XB_Exp1'],
+                'functions': [self.av_stimulation],
+                'json_files': ['av_stimulation.json']
+            }
 
         self.info = self.global_info[sender]
         self.run_simulus_presentation = None
+
+        self.write_log(f"Electrode location: {self.penetration_location}")
 
     def write_log(self, message, log_type='info'):
 
@@ -190,7 +212,7 @@ class SessionHandler:
         progress_factor = 100 // self.info['number_of_sub_sessions']
 
         # Extract the list of stimuli
-        delay_s = (data.get("inter_stimulus_interval_ms", 800) + data.get("duration_ms", 200)) // 1000
+        delay_s = (data.get("inter_stimulus_interval_ms", 800) + data.get("duration_ms", 200)) / 1000
         duration_ms = data.get("duration_ms", 200)
         stimuli = data.get("stimuli", [])
         if data.get("shuffle", True):
@@ -257,7 +279,7 @@ class SessionHandler:
         progress_factor = 100 // self.info['number_of_sub_sessions']
 
         # Extract the list of stimuli
-        delay_s = (data.get("inter_stimulus_interval_ms", 800) + data.get("duration_ms", 200)) // 1000
+        delay_s = (data.get("inter_stimulus_interval_ms", 800) + data.get("duration_ms", 200)) / 1000
         duration_ms = data.get("duration_ms", 200)
         stimuli = data.get("stimuli", [])
         if data.get("shuffle", True):
@@ -269,5 +291,50 @@ class SessionHandler:
                                                  duration_ms=duration_ms)
             self.write_log(f"Playing: {i + 1}/{len(stimuli)}: {stimulus}")
             time.sleep(delay_s)
+            self.master.update_progress(
+                percent=((progress_factor * sub_session_num) + int((i + 1) / len(stimuli) * progress_factor)))
+
+    def rat_vocalization_stimulation(self, sub_session_num, json_file):
+
+        with open(f"assets/experiments_jsons/{json_file}", "r") as f:
+            data = json.load(f)
+
+        progress_factor = 100 // self.info['number_of_sub_sessions']
+
+        # Extract the list of stimuli
+        isi_s = (data.get("inter_stimulus_interval_ms", 800)) / 1000
+        # duration_ms = data.get("duration_ms", 200)
+        stimuli = data.get("stimuli", [])
+        if data.get("shuffle", True):
+            random.shuffle(stimuli)
+        for i, stimulus in enumerate(stimuli):
+            if self.master.emergency_break:
+                raise StopIteration("Emergency break requested.")
+            self.tdt.play_file_stimulation(file_id=(stimulus['id']))
+            self.write_log(f"Playing: {i + 1}/{len(stimuli)}: {stimulus}")
+            time.sleep(isi_s + (stimulus['duration_ms'] / 1000))
+            self.master.update_progress(
+                percent=((progress_factor * sub_session_num) + int((i + 1) / len(stimuli) * progress_factor)))
+
+    def av_stimulation(self, sub_session_num, json_file):
+        with open(f"assets/experiments_jsons/{json_file}", "r") as f:
+            data = json.load(f)
+
+        progress_factor = 100 // self.info['number_of_sub_sessions']
+
+        # Extract the list of stimuli
+        stimuli = data.get("stimuli", [])
+        for i, stimulus in enumerate(stimuli):
+            if self.master.emergency_break:
+                raise StopIteration("Emergency break requested.")
+            self.tdt.play_file_stimulation(file_id=(stimulus['id']))
+            self.write_log(f"Playing: {i + 1}/{len(stimuli)}: {stimulus}")
+            delay = stimulus['delay_s']
+            while delay > 0:
+                self.write_log(f"Playing: {i + 1}/{len(stimuli)}: {stimulus}, Remaining: {delay} seconds.")
+                time.sleep(1)
+                if self.master.emergency_break:
+                    raise StopIteration("Emergency break requested.")
+                delay -= 1
             self.master.update_progress(
                 percent=((progress_factor * sub_session_num) + int((i + 1) / len(stimuli) * progress_factor)))

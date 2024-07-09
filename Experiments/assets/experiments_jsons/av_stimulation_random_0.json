@@ -1,0 +1,25 @@
+{
+    "shuffle": false,
+    "stimuli": [
+        {
+            "id": 1,
+            "delay_s": 185
+        },
+        {
+            "id": 2,
+            "delay_s": 185
+        },
+        {
+            "id": 3,
+            "delay_s": 185
+        },
+        {
+            "id": 4,
+            "delay_s": 185
+        },
+        {
+            "id": 5,
+            "delay_s": 185
+        }
+    ]
+}

@@ -28,7 +28,7 @@ def calculate_pulse_lengths(signal):
 
 
 # Example usage
-log_file_path = 'C:/Users/Lomber/Desktop/Npx-Experiment/Experiments/session_logs/20240708_052335_natural_stimuli_15.log'
+log_file_path = 'C:/Users/Lomber/Desktop/Npx-Experiment/Experiments/session_logs/20240708_073011_ultrasonic_vocalization_0.log'
 extracted_sections = extract_info_from_log(log_file_path)
 
 for index, section in enumerate(extracted_sections):
@@ -61,7 +61,7 @@ for index, section in enumerate(extracted_sections):
             exp_duration = float(f"{exp_duration.seconds}.{exp_duration.microseconds}")
 
             start_index = (onsets[i] - 0.5) / exp_duration
-            end_index = (onsets[i] + 5.5) / exp_duration
+            end_index = (onsets[i] + 0.5) / exp_duration
 
             f_signal = relative_crop(data, start_index, end_index)
             plt.plot(f_signal)
