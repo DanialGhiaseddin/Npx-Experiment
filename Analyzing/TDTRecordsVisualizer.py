@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     print(
         colored("-----------------------TDT Data Reader---------------------------------------------------", "yellow"))
-    data = tdt.read_block('/home/danial/Documents/Projects/McGill/Npx-Experiment/Analyzing/data/tdt tanks/Subject1-231219-160734')
+    data = tdt.read_block('C:\TDT\Synapse\Tanks\LFTone-240915-173830\Australia-240915-174603')
     print(
         colored("-----------------------Data Recording Analyzer-------------------------------------------", "yellow"))
     print('Start Date:', data['info']['start_date'])
@@ -99,6 +99,11 @@ if __name__ == '__main__':
         f_signal = resample_by_interpolation(f_signal, sample_rates[i], 8000)
 
         times = pd.timedelta_range(start=start_time, end=end_time, periods=f_signal.shape[0])
+        if len(raw_data) == 1:
+            axs.plot(times._data, f_signal)
+        else:
+            axs[i].plot(times._data, f_signal)
 
-        axs[i].plot(times._data, f_signal)
+        x = find_rising_edges(f_signal, exp_duration)
+        print(x)
     plt.show()

@@ -39,6 +39,7 @@ class ModernUIExample:
         num_rows = 17
 
         self.toggle_able_comps = []
+        self.electrostatic_switch_on = {}
 
         for col in range(num_columns):
             root.grid_columnconfigure(col, weight=1)
@@ -91,6 +92,11 @@ class ModernUIExample:
 
             self.toggle_able_comps.append(test_buttons_holder[i])
 
+            if 'ultrasonic' in tst_btn.lower():
+                self.electrostatic_switch_on[tst_btn.replace(" ", "_").lower()] = "On"
+            else:
+                self.electrostatic_switch_on[tst_btn.replace(" ", "_").lower()] = "Off"
+
         tuning_curve_test = ['LF Tuning Curve', 'HF Tuning Curve']
 
         tuning_curve_buttons_holder = {}
@@ -104,6 +110,10 @@ class ModernUIExample:
             tuning_curve_buttons_holder[i].grid(row=5, column=i, sticky="nsew", padx=10, pady=10)
 
             self.toggle_able_comps.append(tuning_curve_buttons_holder[i])
+            if 'hf' in tc.lower():
+                self.electrostatic_switch_on[tc.replace(" ", "_").lower()] = "On"
+            else:
+                self.electrostatic_switch_on[tc.replace(" ", "_").lower()] = "Off"
 
         #
 
@@ -146,6 +156,11 @@ class ModernUIExample:
             ui_holder['button'].grid(row=8 + i, column=3, sticky="nsew", padx=10, pady=10)
 
             self.toggle_able_comps.append(ui_holder['button'])
+
+            if 'ultrasonic' in sec_id:
+                self.electrostatic_switch_on[sec_id] = "On"
+            else:
+                self.electrostatic_switch_on[sec_id] = "Off"
 
             self.session_based_recording_holder[sec_id] = ui_holder
 
@@ -205,15 +220,16 @@ class ModernUIExample:
             # comp['state'] = state
 
     def test_button_clicked(self, button):
-        self.show_popup(f"{button} button was clicked")
-        session_handler = SessionHandler(self, sender=button)
+        self.show_popup(f"Please make sure that ultrasonic switch is {self.electrostatic_switch_on[button]}!")
+        session_handler = SessionHandler(self, sender=button, penetration_location=self.electrode_location.get())
         threading.Thread(target=session_handler.run_session,
                          args=()).start()
 
     def run_session_clicked(self, button):
-        self.show_popup(f"{button} button was clicked")
+        self.show_popup(f"Please make sure that ultrasonic switch is {self.electrostatic_switch_on[button]}!")
         number = self.session_number_variables[button].get()
-        session_handler = SessionHandler(self, sender=f"{button}_{number}")
+        session_handler = SessionHandler(self, sender=f"{button}_{number}",
+                                         penetration_location=self.electrode_location.get())
         threading.Thread(target=session_handler.run_session,
                          args=()).start()
 
@@ -247,7 +263,7 @@ class ModernUIExample:
         # Create a new Toplevel window
         popup = customtkinter.CTkToplevel(self.root)
         # self.root.geometry(f"{400}x{300}+0+0")
-        popup.geometry(f"{400}x{300}+200+200")
+        popup.geometry(f"{400}x{100}+200+200")
         popup.title("Warning!")
 
         popup.transient(self.root)
@@ -263,7 +279,7 @@ class ModernUIExample:
         label.pack(pady=10)
 
         # Add an OK button to close the popup
-        ok_button = customtkinter.CTkButton(popup, text="OK", command=popup.destroy)
+        ok_button = customtkinter.CTkButton(popup, text="Confirm", command=popup.destroy)
         ok_button.pack(pady=10)
         self.root.wait_window(popup)
 

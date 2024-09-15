@@ -1,6 +1,6 @@
 import random
 
-from SpikeGLX.controller import set_neuropixel_recording
+from SpikeGLX.controller import SpikeGLXHandler
 from TDTController.Global import TDTGlobal
 import logging
 import time
@@ -119,6 +119,9 @@ class SessionHandler:
         self.info = self.global_info[sender]
         self.run_simulus_presentation = None
 
+        self.spike_glx = SpikeGLXHandler(logger=self.logger)
+        self.spike_glx.connect()
+
         self.write_log(f"Electrode location: {self.penetration_location}")
 
     def write_log(self, message, log_type='info'):
@@ -150,7 +153,8 @@ class SessionHandler:
             self.write_log(f"Data will be saved to {self.tdt.get_recording_tank()}")
 
             if enable_neuropixel_recording and not break_run:
-                set_neuropixel_recording(True)  # TODO: Communicate better with Neuropixel
+                self.spike_glx.start_recording()
+                #set_neuropixel_recording(True)  # TODO: Communicate better with Neuropixel
                 self.write_log("Starting neuropixel system...")
                 time.sleep(2)
 
@@ -169,7 +173,8 @@ class SessionHandler:
             self.write_log("Stopping TDT recording...")
             self.tdt.stop_recording()
             if enable_neuropixel_recording:
-                set_neuropixel_recording(False)  # TODO: Communicate better with Neuropixel
+                self.spike_glx.stop_recording()
+                # set_neuropixel_recording(False)  # TODO: Communicate better with Neuropixel
                 self.write_log("Stopping neuropixel system...")
                 time.sleep(1.5)
             time.sleep(2)

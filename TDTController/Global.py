@@ -1,3 +1,4 @@
+import scipy
 import tdt
 import numpy as np
 from typing import Literal
@@ -8,6 +9,8 @@ class TDTGlobal:
         self.syn = tdt.SynapseAPI()
         self.cache = {}
         self.calibration_map = None
+        self.calibrator = Calibrator(type="ES")
+        print("Hello from TDTGlobal")
         # self.audio = self.AuditoryStimulus(config, self.syn)
         # self.audio = self.NaturalStimulusSet(self.syn)
 
@@ -84,7 +87,7 @@ class TDTGlobal:
                 self.syn.setParameterValue(gizmo_name, 'WaveFreq', freq)
             # TODO: if require this calibration or not (-80 dB)
             if amplitude is not None:
-                self.syn.setParameterValue(gizmo_name, 'WaveAmp', self._us_calibrate_amp(freq, amplitude))
+                self.syn.setParameterValue(gizmo_name, 'WaveAmp', self.calibrator.adjust_amplitude(freq, amplitude))
 
         self.syn.setParameterValue(trigger_gizmo, 'Button1', 1)
 
@@ -167,3 +170,43 @@ class TDTGlobal:
     #         self.tdt_module.setParameterValue('NFS', 'ID', i)
     #         self.tdt_module.setParameterValue('SWTrig', 'Button1', 1)
     #         return f"F-{i}"
+
+
+class Calibrator:
+    def __init__(self, type='ES'):
+        if type == 'ES':
+            calibration_data = np.loadtxt(
+                'C:/Users/Lomber/Desktop/Npx-Experiment/Experiments/assets/calibrations/es_lookup_table.txt')
+        else:
+            calibration_data = np.loadtxt(
+                'C:/Users/Lomber/Desktop/Npx-Experiment/Experiments/assets/calibrations/mf_lookup_table.txt')
+        self.sr = 200000
+        self.frequencies = calibration_data[:, 0]
+        self.magnitude_dB = calibration_data[:, 1]
+
+        # Create an interpolation function for the calibration data
+        self.interp_func = scipy.interpolate.interp1d(self.frequencies, self.magnitude_dB, kind='linear',
+                                                      fill_value="extrapolate")
+
+    def adjust_amplitude(self, frequency, amplitude):
+        """
+        Adjust the amplitude of a tone based on the calibration data.
+
+        Parameters:
+        frequency (float): Frequency of the tone
+        amplitude (float): Desired amplitude of the tone
+
+        Returns:
+        float: Adjusted amplitude
+        """
+        if amplitude < 80:
+            amplitude = 1 / ((80 - amplitude) / 5)
+        else:
+            amplitude = 1
+
+        frequency = frequency / (self.sr / 2)  # Normalize the frequency (0 to 0.5 for normalized frequency
+        print(amplitude, frequency)
+
+        cal_dB = self.interp_func(frequency)
+        adjusted_amp = amplitude * 10 ** (cal_dB / 20)
+        return adjusted_amp
